@@ -17,6 +17,16 @@
 
 ## 📦 安装
 
+### 方式一：Windows 安装包（推荐）
+
+下载 `ResumeGenerator-Setup-v1.0.0.exe`，双击运行安装向导：
+
+1. 运行安装程序
+2. 按向导提示完成安装
+3. 首次运行会自动检查 Node.js 并安装依赖
+
+### 方式二：命令行安装
+
 ```bash
 # 克隆仓库
 git clone https://github.com/CNMJH/resume-generator.git
@@ -31,7 +41,17 @@ npx puppeteer browsers install chrome
 
 ## 🚀 快速开始
 
-### 方式 1：交互式创建
+### Windows 用户
+
+安装后从开始菜单或桌面快捷方式启动，选择：
+- **[1]** 创建新简历（交互式向导）
+- **[2]** 使用示例数据生成
+- **[3]** 查看可用模板
+- **[4]** 打开输出文件夹
+
+### 命令行方式
+
+#### 方式 1：交互式创建
 
 ```bash
 npm start
