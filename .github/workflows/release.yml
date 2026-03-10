@@ -1,0 +1,172 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-cli:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Create CLI package
+      run: |
+        mkdir -p release
+        zip -r release/resume-generator-cli.zip . \
+          -x "node_modules/*" ".git/*" "gui/*" "dist/*" "output/*" ".github/*"
+    
+    - name: Upload CLI artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: cli-package
+        path: release/resume-generator-cli.zip
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install CLI dependencies
+      run: npm ci
+    
+    - name: Install GUI dependencies
+      run: |
+        cd gui
+        npm ci
+    
+    - name: Build GUI for Windows
+      run: |
+        cd gui
+        npm run build:win
+    
+    - name: Build CLI for Windows
+      run: |
+        npm install -g pkg
+        npm run build:win
+        mkdir -p dist/templates dist/examples
+        xcopy /E /Y templates\* dist\templates\
+        xcopy /E /Y examples\* dist\examples\
+    
+    - name: Package Windows builds
+      run: |
+        mkdir -p release
+        cd gui/dist
+        7z a -tzip ../../release/ResumeGenerator-GUI-Windows.zip *
+        cd ../..
+        cd dist
+        7z a -tzip ../release/ResumeGenerator-CLI-Windows.zip *
+    
+    - name: Upload Windows artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-packages
+        path: release/*.zip
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install CLI dependencies
+      run: npm ci
+    
+    - name: Install GUI dependencies
+      run: |
+        cd gui
+        npm ci
+    
+    - name: Build GUI for macOS
+      run: |
+        cd gui
+        npm run build:mac
+    
+    - name: Package macOS build
+      run: |
+        mkdir -p release
+        cd gui/dist
+        zip -r ../../release/ResumeGenerator-GUI-macOS.zip *
+    
+    - name: Upload macOS artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: macos-package
+        path: release/*.zip
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install CLI dependencies
+      run: npm ci
+    
+    - name: Install GUI dependencies
+      run: |
+        cd gui
+        npm ci
+    
+    - name: Build GUI for Linux
+      run: |
+        cd gui
+        npm run build:linux
+    
+    - name: Package Linux build
+      run: |
+        mkdir -p release
+        cd gui/dist
+        zip -r ../../release/ResumeGenerator-GUI-Linux.zip *
+    
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-package
+        path: release/*.zip
+
+  release:
+    needs: [build-cli, build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+    
+    - name: List artifacts
+      run: find artifacts -type f -name "*.zip" | sort
+    
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/**/*.zip
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
