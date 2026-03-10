@@ -4,169 +4,214 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-cli:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
-    - name: Create CLI package
+
+    - name: Build CLI for Windows
+      run: |
+        npm install -g pkg
+        pkg . --targets node18-win-x64 --output dist/resume-generator-win.exe
+        pkg . --targets node18-macos-x64 --output dist/resume-generator-macos
+        pkg . --targets node18-linux-x64 --output dist/resume-generator-linux
+
+    - name: Package CLI
       run: |
         mkdir -p release
-        zip -r release/resume-generator-cli.zip . \
-          -x "node_modules/*" ".git/*" "gui/*" "dist/*" "output/*" ".github/*"
-    
-    - name: Upload CLI artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: cli-package
-        path: release/resume-generator-cli.zip
+        # Windows
+        mkdir -p release/resume-generator-cli-windows/templates
+        mkdir -p release/resume-generator-cli-windows/examples
+        cp dist/resume-generator-win.exe release/resume-generator-cli-windows/
+        cp -r templates/* release/resume-generator-cli-windows/templates/
+        cp -r examples/* release/resume-generator-cli-windows/examples/
+        echo '@echo off' > release/resume-generator-cli-windows/启动.bat
+        echo 'chcp 65001 >nul' >> release/resume-generator-cli-windows/启动.bat
+        echo 'resume-generator-win.exe %*' >> release/resume-generator-cli-windows/启动.bat
+        echo 'pause' >> release/resume-generator-cli-windows/启动.bat
+        cd release && zip -r resume-generator-cli-windows.zip resume-generator-cli-windows/
+        # macOS
+        mkdir -p release/resume-generator-cli-macos/templates
+        mkdir -p release/resume-generator-cli-macos/examples
+        cp dist/resume-generator-macos release/resume-generator-cli-macos/
+        cp -r templates/* release/resume-generator-cli-macos/templates/
+        cp -r examples/* release/resume-generator-cli-macos/examples/
+        cd release && zip -r resume-generator-cli-macos.zip resume-generator-cli-macos/
+        # Linux
+        mkdir -p release/resume-generator-cli-linux/templates
+        mkdir -p release/resume-generator-cli-linux/examples
+        cp dist/resume-generator-linux release/resume-generator-cli-linux/
+        cp -r templates/* release/resume-generator-cli-linux/templates/
+        cp -r examples/* release/resume-generator-cli-linux/examples/
+        cd release && zip -r resume-generator-cli-linux.zip resume-generator-cli-linux/
 
-  build-windows:
+    - name: Upload CLI artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: cli-artifacts
+        path: release/*.zip
+
+  build-gui-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-    
+
     - name: Install CLI dependencies
       run: npm ci
-    
+
     - name: Install GUI dependencies
       run: |
         cd gui
         npm ci
-    
+
     - name: Build GUI for Windows
       run: |
         cd gui
         npm run build:win
-    
-    - name: Build CLI for Windows
-      run: |
-        npm install -g pkg
-        npm run build:win
-        mkdir -p dist/templates dist/examples
-        xcopy /E /Y templates\* dist\templates\
-        xcopy /E /Y examples\* dist\examples\
-    
-    - name: Package Windows builds
-      run: |
-        mkdir -p release
-        cd gui/dist
-        7z a -tzip ../../release/ResumeGenerator-GUI-Windows.zip *
-        cd ../..
-        cd dist
-        7z a -tzip ../release/ResumeGenerator-CLI-Windows.zip *
-    
-    - name: Upload Windows artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: windows-packages
-        path: release/*.zip
 
-  build-macos:
+    - name: Upload GUI Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: gui-windows
+        path: gui/dist/*.exe
+
+  build-gui-macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-    
+
     - name: Install CLI dependencies
       run: npm ci
-    
+
     - name: Install GUI dependencies
       run: |
         cd gui
         npm ci
-    
+
     - name: Build GUI for macOS
       run: |
         cd gui
         npm run build:mac
-    
-    - name: Package macOS build
-      run: |
-        mkdir -p release
-        cd gui/dist
-        zip -r ../../release/ResumeGenerator-GUI-macOS.zip *
-    
-    - name: Upload macOS artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: macos-package
-        path: release/*.zip
 
-  build-linux:
+    - name: Upload GUI macOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: gui-macos
+        path: gui/dist/*.dmg
+
+  build-gui-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-    
+
     - name: Install CLI dependencies
       run: npm ci
-    
+
     - name: Install GUI dependencies
       run: |
         cd gui
         npm ci
-    
+
     - name: Build GUI for Linux
       run: |
         cd gui
         npm run build:linux
-    
-    - name: Package Linux build
-      run: |
-        mkdir -p release
-        cd gui/dist
-        zip -r ../../release/ResumeGenerator-GUI-Linux.zip *
-    
-    - name: Upload Linux artifact
-      uses: actions/upload-artifact@v3
+
+    - name: Upload GUI Linux artifact
+      uses: actions/upload-artifact@v4
       with:
-        name: linux-package
-        path: release/*.zip
+        name: gui-linux
+        path: gui/dist/*.AppImage
 
   release:
-    needs: [build-cli, build-windows, build-macos, build-linux]
+    needs: [build-cli, build-gui-windows, build-gui-macos, build-gui-linux]
     runs-on: ubuntu-latest
     steps:
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: artifacts
-    
+        merge-multiple: true
+
     - name: List artifacts
-      run: find artifacts -type f -name "*.zip" | sort
-    
-    - name: Upload to Release
+      run: |
+        echo "Downloaded artifacts:"
+        find artifacts -type f | sort
+
+    - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: artifacts/**/*.zip
-        generate_release_notes: true
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
+        files: artifacts/**
+        body: |
+          ## 简历生成器 ${{ github.ref_name }}
+
+          ### 📦 下载
+
+          #### CLI 命令行版
+          - [Windows](resume-generator-cli-windows.zip) - 下载后解压，双击 `启动.bat` 运行
+          - [macOS](resume-generator-cli-macos.zip)
+          - [Linux](resume-generator-cli-linux.zip)
+
+          #### GUI 图形界面版
+          - [Windows Installer](Resume-Generator-Setup-*.exe)
+          - [macOS DMG](Resume-Generator-*.dmg)
+          - [Linux AppImage](Resume-Generator-*.AppImage)
+
+          ### 🚀 快速开始
+
+          **CLI 版：**
+          ```bash
+          ./resume-generator-win.exe
+          ```
+
+          **GUI 版：**
+          双击安装程序，按提示安装后从开始菜单启动。
+
+          ### 📋 系统要求
+          - Windows 10/11 (64位)
+          - macOS 10.14+
+          - Linux (Ubuntu 18.04+)
+
+          ### 📄 许可证
+          MIT License
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
