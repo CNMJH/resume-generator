@@ -1,31 +1,30 @@
-# Resume Generator - AI 驱动的简历生成器
+# 简历生成器 - AI 驱动的简历生成器
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
 
-🚀 一个强大的 Node.js 简历生成器，支持交互式创建、多种模板、自动优化和 PDF 导出。
+🚀 一个简单易用的简历生成器，支持交互式创建、多种模板、自动优化和 PDF 导出。
 
-## ✨ 特性
+---
 
-- 🎨 **多种精美模板** - 现代风格、经典风格等
-- 🤖 **AI 智能优化** - 自动计算工作年限、技能分类、生成摘要
-- 💬 **交互式创建** - 命令行向导，无需编写代码
-- 📄 **PDF 导出** - 高质量 PDF 输出，支持打印
-- 📝 **Markdown 支持** - 同时生成 Markdown 版本
-- 🌐 **中英文支持** - 完美支持中文简历
-- 🎯 **技能自动分类** - 前端、后端、数据库、DevOps、AI 自动归类
+## 📥 下载安装
 
-## 📦 安装
+### Windows 用户（推荐）
 
-### 方式一：Windows 安装包（推荐）
+1. **下载安装包**
+   - 访问 [Releases 页面](../../releases)
+   - 下载最新版 `ResumeGenerator-Setup-v1.x.x.exe`
 
-下载 `ResumeGenerator-Setup-v1.0.0.exe`，双击运行安装向导：
+2. **安装**
+   - 双击 `.exe` 文件运行安装向导
+   - 按提示完成安装
+   - 首次使用会自动检查 Node.js 环境
 
-1. 运行安装程序
-2. 按向导提示完成安装
-3. 首次运行会自动检查 Node.js 并安装依赖
+3. **启动使用**
+   - 桌面快捷方式，或
+   - 开始菜单 → 简历生成器
 
-### 方式二：命令行安装
+### Mac/Linux 用户
 
 ```bash
 # 克隆仓库
@@ -35,111 +34,109 @@ cd resume-generator
 # 安装依赖
 npm install
 
-# 安装 Puppeteer 依赖（用于 PDF 导出）
-npx puppeteer browsers install chrome
+# 启动
+npm start
 ```
 
-## 🚀 快速开始
+---
 
-### Windows 用户
+## 🚀 使用指南
 
-安装后从开始菜单或桌面快捷方式启动，选择：
-- **[1]** 创建新简历（交互式向导）
-- **[2]** 使用示例数据生成
-- **[3]** 查看可用模板
-- **[4]** 打开输出文件夹
+### Windows 图形界面
+
+启动后选择操作：
+
+| 选项 | 功能 |
+|------|------|
+| **1** | 创建新简历（交互式向导） |
+| **2** | 使用示例数据快速预览 |
+| **3** | 查看可用模板 |
+| **4** | 打开输出文件夹 |
+| **5** | 退出 |
 
 ### 命令行方式
 
-#### 方式 1：交互式创建
-
 ```bash
+# 交互式创建
 npm start
-# 或
-node src/cli.js create
+
+# 使用 JSON 文件生成
+npm run build my-resume.json
+
+# 查看模板列表
+node src/cli.js templates
 ```
 
-按照提示输入信息，自动生成简历。
+---
 
-### 方式 2：从 JSON 文件生成
+## 📋 简历数据格式
 
-```bash
-# 使用示例数据
-npm run build examples/sample.json
-
-# 使用自定义数据
-node src/cli.js build my-resume.json
-```
-
-### 方式 3：编程式使用
-
-```javascript
-const ResumeBuilder = require('./src/index');
-
-const builder = new ResumeBuilder({
-  template: 'modern'
-});
-
-const data = {
-  name: '张三',
-  title: '软件工程师',
-  email: 'zhangsan@example.com',
-  skills: ['JavaScript', 'React', 'Node.js'],
-  experience: [...]
-};
-
-const result = await builder.build(data);
-console.log('PDF:', result.pdfPath);
-```
-
-## 📋 数据格式
+创建 `my-resume.json` 文件：
 
 ```json
 {
-  "name": "姓名",
-  "title": "职位",
-  "email": "邮箱",
-  "phone": "电话",
-  "location": "所在地",
-  "website": "个人网站",
-  "summary": "个人简介（可选，自动生成）",
-  "skills": ["技能1", "技能2"],
+  "name": "张三",
+  "title": "高级软件工程师",
+  "email": "zhangsan@example.com",
+  "phone": "13800138000",
+  "location": "北京",
+  "summary": "5年软件开发经验",
+  "skills": ["JavaScript", "React", "Node.js"],
   "experience": [{
-    "company": "公司名",
-    "position": "职位",
+    "company": "科技有限公司",
+    "position": "高级前端工程师",
     "startDate": "2020-01",
-    "endDate": "2023-01",
-    "description": "工作描述",
-    "achievements": ["成就1", "成就2"]
+    "endDate": "至今",
+    "description": "负责核心产品前端开发",
+    "achievements": ["优化性能提升50%"]
   }],
   "education": [{
-    "school": "学校",
-    "degree": "学位",
+    "school": "北京大学",
+    "degree": "计算机科学学士",
     "startDate": "2015-09",
     "endDate": "2019-06"
-  }],
-  "projects": [{
-    "name": "项目名",
-    "description": "项目描述",
-    "techStack": ["技术1", "技术2"]
   }]
 }
 ```
 
-## 🎨 可用模板
+---
 
-| 模板 | 描述 | 预览 |
-|------|------|------|
-| `modern` | 现代简洁风格，适合科技公司 | [预览](#) |
-| `classic` | 经典商务风格，适合传统行业 | [预览](#) |
-| `minimal` | 极简风格，突出重点 | [预览](#) |
+## 🎨 模板选择
 
-查看所有模板：
-```bash
-node src/cli.js templates
-```
+| 模板 | 风格 | 适用场景 |
+|------|------|---------|
+| `modern` | 现代简洁 | 科技公司、互联网 |
+| `classic` | 经典商务 | 传统行业、国企 |
+| `minimal` | 极简风格 | 设计、创意岗位 |
 
-## 🛠️ 开发
+---
+
+## 📁 输出文件
+
+生成的简历保存在 `output` 文件夹：
+
+- `resume.pdf` - PDF 格式（可直接打印/投递）
+- `resume.md` - Markdown 格式（可编辑）
+
+---
+
+## 🔧 常见问题
+
+**Q: 安装时提示需要 Node.js？**
+> 访问 https://nodejs.org/ 下载安装 LTS 版本，安装时勾选 "Add to PATH"
+
+**Q: 生成的 PDF 在哪里？**
+> 在安装目录的 `output` 文件夹，或通过菜单选项 4 直接打开
+
+**Q: 如何修改已生成的简历？**
+> 编辑 JSON 文件后重新运行生成命令
+
+**Q: 支持自定义模板吗？**
+> 支持，在 `templates/` 目录创建 `.hbs` 文件，使用 Handlebars 语法
+
+---
+
+## 🛠️ 开发者
 
 ```bash
 # 开发模式
@@ -148,73 +145,16 @@ npm run dev
 # 运行测试
 npm test
 
-# 构建项目
-npm run build
+# 构建 Windows 安装包
+cd installer
+build-installer.bat
 ```
 
-## 📁 项目结构
-
-```
-resume-generator/
-├── src/
-│   ├── index.js          # 主入口
-│   ├── cli.js            # 命令行界面
-│   ├── generator.js      # 数据生成和优化
-│   ├── template.js       # 模板引擎
-│   └── exporter.js       # PDF/Markdown 导出
-├── templates/
-│   └── modern.hbs        # Handlebars 模板
-├── examples/
-│   └── sample.json       # 示例数据
-├── output/               # 输出目录
-├── package.json
-└── README.md
-```
-
-## 🔧 配置
-
-### 环境变量
-
-```bash
-# 输出目录
-RESUME_OUTPUT_DIR=./output
-
-# 默认模板
-RESUME_DEFAULT_TEMPLATE=modern
-```
-
-### 自定义模板
-
-1. 在 `templates/` 目录创建 `.hbs` 文件
-2. 使用 Handlebars 语法
-3. 通过 `--template` 参数使用
-
-## 📝 依赖
-
-- [Handlebars](https://handlebarsjs.com/) - 模板引擎
-- [Puppeteer](https://pptr.dev/) - PDF 生成
-- [Inquirer](https://github.com/SBoudrias/Inquirer.js/) - 交互式命令行
-- [Commander](https://github.com/tj/commander.js/) - CLI 框架
-- [Chalk](https://github.com/chalk/chalk) - 终端样式
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/amazing`)
-3. 提交更改 (`git commit -m 'Add amazing feature'`)
-4. 推送分支 (`git push origin feature/amazing`)
-5. 创建 Pull Request
+---
 
 ## 📄 许可证
 
 [MIT](LICENSE) © CNMJH
-
-## 🙏 致谢
-
-- 灵感来源于 [jsonresume](https://jsonresume.org/)
-- 模板设计参考现代简历趋势
 
 ---
 
