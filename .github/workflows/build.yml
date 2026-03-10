@@ -1,9 +1,8 @@
-name: Build and Release
+name: Build Windows
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
@@ -34,14 +33,12 @@ jobs:
         echo chcp 65001 ^>nul >> resume-generator-windows\启动.bat
         echo resume-generator.exe >> resume-generator-windows\启动.bat
         echo pause >> resume-generator-windows\启动.bat
-        7z a resume-generator-windows.zip resume-generator-windows\
     
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: v1.0.0
-        name: Windows Release
-        files: resume-generator-windows.zip
+        files: resume-generator-windows/**
         body: |
           ## 简历生成器 Windows 版
           
