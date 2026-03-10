@@ -11,13 +11,12 @@
     "start": "node src/cli.js create",
     "dev": "nodemon src/cli.js",
     "build": "node scripts/build.js",
-    "build:exe": "node scripts/build-exe.js",
-    "build:win": "pkg . --targets node18-win-x64 --output dist/resume-generator-win.exe",
-    "build:mac": "pkg . --targets node18-macos-x64 --output dist/resume-generator-mac",
-    "build:linux": "pkg . --targets node18-linux-x64 --output dist/resume-generator-linux",
-    "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
+    "build:win": "pkg . --targets node18-win-x64 --output dist/resume-generator.exe --compress GZip",
+    "build:win:gui": "cd gui && npm run build:win",
+    "build:all": "npm run build:win && npm run build:win:gui",
     "test": "jest",
-    "pkg:install": "npm install -g pkg"
+    "pkg:install": "npm install -g pkg",
+    "dist": "npm run build:win && node scripts/package-windows.js"
   },
   "pkg": {
     "scripts": [

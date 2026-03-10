@@ -38,20 +38,15 @@
       ],
       "icon": "assets/icon.ico"
     },
-    "mac": {
-      "target": ["dmg"],
-      "icon": "assets/icon.icns"
-    },
-    "linux": {
-      "target": ["AppImage", "deb"],
-      "icon": "assets"
-    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "简历生成器"
+      "shortcutName": "简历生成器",
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "license": "../LICENSE"
     }
   },
   "dependencies": {
