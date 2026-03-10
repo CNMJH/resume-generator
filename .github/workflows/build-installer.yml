@@ -28,8 +28,8 @@ jobs:
     
     - name: Download and install Inno Setup
       run: |
-        $url = "https://jrsoftware.org/download.php/is.exe"
-        $output = "$env:TEMP\is.exe"
+        $url = "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe"
+        $output = "$env:TEMP\innosetup.exe"
         Invoke-WebRequest -Uri $url -OutFile $output
         Start-Process -FilePath $output -ArgumentList "/VERYSILENT /NORESTART" -Wait
         Remove-Item $output
