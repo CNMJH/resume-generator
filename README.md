@@ -2,8 +2,23 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
+[![Windows Build](https://img.shields.io/badge/Windows-Executable-blue?logo=windows)](https://github.com/CNMJH/resume-generator/releases)
 
 🚀 一个强大的 Node.js 简历生成器，支持交互式创建、多种模板、自动优化和 PDF 导出。
+
+**[下载 Windows 可执行版 →](https://github.com/CNMJH/resume-generator/releases)**
+
+---
+
+## 📦 快速下载
+
+| 平台 | 下载 | 说明 |
+|------|------|------|
+| Windows | [下载 EXE](https://github.com/CNMJH/resume-generator/releases) | 无需安装 Node.js，双击运行 |
+| macOS | `npm install` | 需要 Node.js 环境 |
+| Linux | `npm install` | 需要 Node.js 环境 |
+
+---
 
 ## ✨ 特性
 
@@ -14,8 +29,20 @@
 - 📝 **Markdown 支持** - 同时生成 Markdown 版本
 - 🌐 **中英文支持** - 完美支持中文简历
 - 🎯 **技能自动分类** - 前端、后端、数据库、DevOps、AI 自动归类
+- 🖥️ **Windows 可执行文件** - 无需 Node.js，双击运行
 
-## 📦 安装
+---
+
+## 🚀 快速开始
+
+### Windows 用户（推荐）
+
+1. **[下载最新版本](https://github.com/CNMJH/resume-generator/releases)**
+2. 解压到任意文件夹
+3. 双击 `启动.bat` 运行
+4. 按提示输入信息，自动生成 PDF
+
+### macOS / Linux / 开发者
 
 ```bash
 # 克隆仓库
@@ -25,33 +52,41 @@ cd resume-generator
 # 安装依赖
 npm install
 
-# 安装 Puppeteer 依赖（用于 PDF 导出）
-npx puppeteer browsers install chrome
+# 运行
+npm start
 ```
 
-## 🚀 快速开始
+---
 
-### 方式 1：交互式创建
+## 📖 使用指南
+
+### 交互式创建
 
 ```bash
+# Windows
+resume-generator-win.exe
+
+# macOS/Linux
 npm start
-# 或
-node src/cli.js create
 ```
 
-按照提示输入信息，自动生成简历。
+按提示输入：
+- 姓名、职位、联系方式
+- 选择技能
+- 添加工作经历
+- 自动生成 PDF 简历
 
-### 方式 2：从 JSON 文件生成
+### 从 JSON 文件生成
 
 ```bash
 # 使用示例数据
-npm run build examples/sample.json
+resume-generator-win.exe build examples/sample.json
 
 # 使用自定义数据
-node src/cli.js build my-resume.json
+resume-generator-win.exe build my-resume.json
 ```
 
-### 方式 3：编程式使用
+### 编程式使用
 
 ```javascript
 const ResumeBuilder = require('./src/index');
@@ -71,6 +106,8 @@ const data = {
 const result = await builder.build(data);
 console.log('PDF:', result.pdfPath);
 ```
+
+---
 
 ## 📋 数据格式
 
@@ -106,6 +143,8 @@ console.log('PDF:', result.pdfPath);
 }
 ```
 
+---
+
 ## 🎨 可用模板
 
 | 模板 | 描述 | 预览 |
@@ -116,21 +155,38 @@ console.log('PDF:', result.pdfPath);
 
 查看所有模板：
 ```bash
-node src/cli.js templates
+resume-generator-win.exe templates
 ```
 
-## 🛠️ 开发
+---
+
+## 🔨 构建 Windows 可执行文件
+
+### 自动构建（推荐）
 
 ```bash
-# 开发模式
-npm run dev
+# 安装依赖
+npm install
 
-# 运行测试
-npm test
-
-# 构建项目
-npm run build
+# 构建 Windows 可执行文件
+npm run build:exe
 ```
+
+### 手动构建
+
+```bash
+# 安装 pkg
+npm install -g pkg
+
+# 构建
+npm run build:win
+
+# 复制资源文件
+xcopy /E /I templates dist\templates
+xcopy /E /I examples dist\examples
+```
+
+---
 
 ## 📁 项目结构
 
@@ -146,10 +202,34 @@ resume-generator/
 │   └── modern.hbs        # Handlebars 模板
 ├── examples/
 │   └── sample.json       # 示例数据
-├── output/               # 输出目录
+├── dist/                 # 构建输出（Windows EXE）
+│   ├── resume-generator-win.exe
+│   ├── templates/
+│   └── examples/
 ├── package.json
-└── README.md
+├── README.md
+└── README-WINDOWS.md     # Windows 使用指南
 ```
+
+---
+
+## 🛠️ 开发
+
+```bash
+# 开发模式
+npm run dev
+
+# 运行测试
+npm test
+
+# 构建
+npm run build
+
+# 构建所有平台
+npm run build:all
+```
+
+---
 
 ## 🔧 配置
 
@@ -169,6 +249,8 @@ RESUME_DEFAULT_TEMPLATE=modern
 2. 使用 Handlebars 语法
 3. 通过 `--template` 参数使用
 
+---
+
 ## 📝 依赖
 
 - [Handlebars](https://handlebarsjs.com/) - 模板引擎
@@ -176,6 +258,9 @@ RESUME_DEFAULT_TEMPLATE=modern
 - [Inquirer](https://github.com/SBoudrias/Inquirer.js/) - 交互式命令行
 - [Commander](https://github.com/tj/commander.js/) - CLI 框架
 - [Chalk](https://github.com/chalk/chalk) - 终端样式
+- [pkg](https://github.com/vercel/pkg) - 打包工具
+
+---
 
 ## 🤝 贡献
 
@@ -187,9 +272,13 @@ RESUME_DEFAULT_TEMPLATE=modern
 4. 推送分支 (`git push origin feature/amazing`)
 5. 创建 Pull Request
 
+---
+
 ## 📄 许可证
 
 [MIT](LICENSE) © CNMJH
+
+---
 
 ## 🙏 致谢
 

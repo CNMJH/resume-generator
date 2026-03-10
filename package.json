@@ -3,11 +3,34 @@
   "version": "1.0.0",
   "description": "AI 驱动的简历生成器 - 自动生成专业简历",
   "main": "src/index.js",
+  "bin": {
+    "resume-gen": "./src/cli.js",
+    "简历生成器": "./src/cli.js"
+  },
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node src/cli.js create",
+    "dev": "nodemon src/cli.js",
     "build": "node scripts/build.js",
-    "test": "jest"
+    "build:exe": "node scripts/build-exe.js",
+    "build:win": "pkg . --targets node18-win-x64 --output dist/resume-generator-win.exe",
+    "build:mac": "pkg . --targets node18-macos-x64 --output dist/resume-generator-mac",
+    "build:linux": "pkg . --targets node18-linux-x64 --output dist/resume-generator-linux",
+    "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
+    "test": "jest",
+    "pkg:install": "npm install -g pkg"
+  },
+  "pkg": {
+    "scripts": [
+      "src/**/*.js"
+    ],
+    "assets": [
+      "templates/**/*",
+      "examples/**/*"
+    ],
+    "targets": [
+      "node18-win-x64"
+    ],
+    "outputPath": "dist"
   },
   "keywords": [
     "resume",
@@ -15,7 +38,9 @@
     "generator",
     "ai",
     "markdown",
-    "pdf"
+    "pdf",
+    "简历",
+    "生成器"
   ],
   "author": "CNMJH",
   "license": "MIT",
@@ -29,12 +54,18 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.0",
-    "jest": "^29.0.0"
+    "jest": "^29.0.0",
+    "pkg": "^5.8.1"
   },
   "engines": {
     "node": ">=16.0.0"
   },
-  "bin": {
-    "resume-gen": "./src/cli.js"
-  }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CNMJH/resume-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CNMJH/resume-generator/issues"
+  },
+  "homepage": "https://github.com/CNMJH/resume-generator#readme"
 }
